@@ -23,6 +23,17 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
+app.get("/info", (req, res) => {
+  res.send(
+    "<div>Puhelinluettelossa " +
+      persons.length +
+      " henkilön tiedot</div>" +
+      "<div>" +
+      new Date() +
+      "</div>"
+  );
+});
+
 app.get("/api/persons", (req, res) => {
   res.json(persons);
 });
