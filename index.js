@@ -3,6 +3,9 @@ const app = express();
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const personsLength = 5000;
+const cors = require("cors");
+
+app.use(cors());
 
 morgan.token("body", function(req, res) {
   return JSON.stringify(req.body);
