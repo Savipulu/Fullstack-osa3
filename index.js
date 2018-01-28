@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const personsLength = 5000;
 const cors = require("cors");
+const Person = require("./models/person");
 
 app.use(cors());
 app.use(express.static("build"));
@@ -36,43 +37,55 @@ let persons = [
 ];
 
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  Person.find({}).then(persons => {
+    res.json(persons.map(Person.format));
+  });
 });
 
 app.get("/info", (req, res) => {
-  res.send(
-    "<div>Puhelinluettelossa " +
-      persons.length +
-      " henkilön tiedot</div>" +
-      "<div>" +
-      new Date() +
-      "</div>"
-  );
+  Person.find({}).then(persons => {
+    res.send(
+      "<div>Puhelinluettelossa " +
+        persons.length +
+        " henkilön tiedot</div>" +
+        "<div>" +
+        new Date() +
+        "</div>"
+    );
+  });
 });
 
 app.get("/api/persons", (req, res) => {
-  res.json(persons);
+  Person.find({}).then(persons => {
+    res.json(persons.map(Person.format));
+  });
 });
 
 app.get("/api/persons/:id", (req, res) => {
-  const id = Number(req.params.id);
-  const person = persons.find(person => person.id === id);
-  if (person) {
-    res.json(person);
-  } else {
-    res.status(404).end();
-  }
+  Person.findById(req.params.id)
+    .then(person => {
+      if (person) {
+        res.json(Person.format(person));
+      } else {
+        res.status(404).end();
+      }
+    })
+    .catch(error => {
+      console.log(error);
+      res.status(400).end({ error: "bad id" });
+    });
 });
 
 app.delete("/api/persons/:id", (req, res) => {
-  const id = Number(req.params.id);
-  persons = persons.filter(person => person.id !== id);
-  res.status(204).end();
+  Person.findByIdAndRemove(req.params.id)
+    .then(result => {
+      res.status(204).end();
+    })
+    .catch(error => {
+      console.log(error);
+      res.status(400).send({ error: "bad id" });
+    });
 });
-
-const generateId = () => {
-  return Math.floor(Math.random() * Math.floor(personsLength));
-};
 
 app.post("/api/persons", (req, res) => {
   const body = req.body;
@@ -85,15 +98,39 @@ app.post("/api/persons", (req, res) => {
     return res.status(400).json({ error: "name already in persons" });
   }
 
+  const person = new Person({
+    name: body.name,
+    number: body.number
+  });
+
+  Person.find({ name: body.name }).then(result => {
+    if (result) {
+      console.log("Cannot add two people with the same name");
+      return;
+    }
+  });
+
+  person.save().then(savedPerson => {
+    res.json(Person.format(savedPerson));
+  });
+});
+
+app.put("/api/persons/:id", (req, res) => {
+  const body = req.body;
+
   const person = {
     name: body.name,
-    number: body.number,
-    id: generateId()
+    number: body.number
   };
 
-  persons = persons.concat(person);
-
-  res.json(person);
+  Person.findByIdAndUpdate(req.params.id, person, { new: true })
+    .then(updatedPerson => {
+      res.json(Person.format(updatedPerson));
+    })
+    .catch(error => {
+      console.log(error);
+      res.status(400).send({ error: "bad id" });
+    });
 });
 
 const PORT = process.env.PORT || 3001;
