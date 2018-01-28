@@ -101,18 +101,18 @@ app.post("/api/persons", (req, res) => {
     number: body.number
   });
 
-  Person.find({ name: body.name }).then(p => {
-    if (p.name !== undefined) {
-      return res
-        .status(400)
-        .json({ error: "Name already in persons, use put to update" });
-    } else {
+  Person.find({ name: body.name }).then(result => {
+    if (result.length === 0) {
       person
         .save()
         .then(Person.format)
         .then(savedAndFormatted => {
           res.json(savedAndFormatted);
         });
+    } else {
+      return res
+        .status(400)
+        .json({ error: "Name already in persons, use put to update" });
     }
   });
 });
