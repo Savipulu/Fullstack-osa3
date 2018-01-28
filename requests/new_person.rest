@@ -1,7 +1,10 @@
-POST https://stormy-tundra-13042.herokuapp.com/api/persons
+POST https://localhost:3001/api/persons
 Content-Type: application/json
 
 {
     "name": "Uusi",
     "number": "040-1231234"
 }
+
+//POST https://stormy-tundra-13042.herokuapp.com/api/persons
+//POST https://localhost:3001/api/persons
