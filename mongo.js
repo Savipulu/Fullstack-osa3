@@ -17,17 +17,17 @@ const person = new Person({
 
 const args = process.argv;
 
-if (args.length == 4) {
+if (args.length === 4) {
   console.log(
     "Lisätään henkilö " + args[2] + " numero " + args[3] + " luetteloon"
   );
   person.name = args[2];
   person.number = args[3];
-  person.save().then(result => {
+  person.save().then(() => {
     console.log("saved person to phonebook");
     mongoose.connection.close();
   });
-} else if (args.length == 2) {
+} else if (args.length === 2) {
   console.log("puhelinluettelo: ");
   Person.find({}).then(result => {
     result.forEach(person => {
