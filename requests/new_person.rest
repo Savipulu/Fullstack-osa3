@@ -2,7 +2,7 @@ POST https://stormy-tundra-13042.herokuapp.com/api/persons
 Content-Type: application/json
 
 {
-    "name": "Uusi",
+    "name": "RESTclientnro",
     "number": "040-1231234"
 }
 
