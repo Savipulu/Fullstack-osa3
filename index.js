@@ -103,13 +103,6 @@ app.post("/api/persons", (req, res) => {
     number: body.number
   });
 
-  Person.find({ name: body.name }).then(result => {
-    if (result) {
-      console.log("Cannot add two people with the same name");
-      return;
-    }
-  });
-
   person.save().then(savedPerson => {
     res.json(Person.format(savedPerson));
   });
