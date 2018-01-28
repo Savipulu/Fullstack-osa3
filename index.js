@@ -102,7 +102,7 @@ app.post("/api/persons", (req, res) => {
   });
 
   Person.find({ name: body.name }).then(p => {
-    if (p.name === undefined) {
+    if (p.name !== undefined) {
       return res
         .status(400)
         .json({ error: "Name already in persons, use put to update" });
