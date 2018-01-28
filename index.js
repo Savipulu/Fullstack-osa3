@@ -91,9 +91,9 @@ app.post("/api/persons", (req, res) => {
   const body = req.body;
 
   if (body.name === undefined) {
-    return res.status(400).json({ error: "name missing" });
+    return res.status(400).json({ error: "Name missing" });
   } else if (body.number === undefined) {
-    return res.status(400).json({ error: "number missing" });
+    return res.status(400).json({ error: "Number missing" });
   }
 
   const person = new Person({
@@ -103,11 +103,16 @@ app.post("/api/persons", (req, res) => {
 
   Person.find({ name: body.name }).then(person => {
     if (person) {
-      return res.status(400).json({ error: "name already in persons" });
+      return res
+        .status(400)
+        .json({ error: "Name already in persons, use put to update" });
     } else {
-      person.save().then(savedPerson => {
-        res.json(Person.format(savedPerson));
-      });
+      person
+        .save()
+        .then(Person.format)
+        .then(savedAndFormatted => {
+          res.json(savedAndFormatted);
+        });
     }
   });
 });
