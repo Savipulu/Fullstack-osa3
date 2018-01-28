@@ -101,7 +101,7 @@ app.post("/api/persons", (req, res) => {
     number: body.number
   });
 
-  Person.find(person => person.name === body.name).then(person => {
+  Person.find({ name: body.name }).then(person => {
     if (person) {
       return res.status(400).json({ error: "name already in persons" });
     } else {
